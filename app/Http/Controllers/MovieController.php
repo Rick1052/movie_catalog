@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Http;
+use App\Models\Comment;
 
 class MovieController extends Controller
 {
@@ -20,8 +21,12 @@ class MovieController extends Controller
 
         $movie = $response->json();
 
+        // Buscar comentários do filme com usuário carregado
+        $comments = Comment::where('movie_id', $id)->with('user')->latest()->get();
+
         return Inertia::render('Movies/Show', [
             'movie' => $movie,
+            'comments' => $comments,
         ]);
     }
 }
