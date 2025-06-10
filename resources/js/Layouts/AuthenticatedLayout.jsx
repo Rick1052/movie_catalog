@@ -42,11 +42,25 @@ export default function Authenticated({ auth, header, children }) {
 
                             <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex dark:text-gray-200">
                                 <NavLink
+                                    href={route('home')}
+                                    active={route().current('home')}
+                                    className="dark:text-white text-gray-800"
+                                >
+                                    Home
+                                </NavLink>
+                                <NavLink
                                     href={route('dashboard')}
                                     active={route().current('dashboard')}
                                     className="dark:text-white text-gray-800"
                                 >
                                     Catálogo
+                                </NavLink>
+                                <NavLink
+                                    href={route('favorites.index')}
+                                    active={route().current('favorites.index')}
+                                    className="dark:text-white text-gray-800"
+                                >
+                                    Favoritos
                                 </NavLink>
                             </div>
                         </div>
@@ -138,8 +152,14 @@ export default function Authenticated({ auth, header, children }) {
 
                 <div className={`${showingNavigationDropdown ? 'block' : 'hidden'} sm:hidden`}>
                     <div className="pt-2 pb-3 space-y-1">
+                        <ResponsiveNavLink href={route('home')} active={route().current('home')}>
+                            Home
+                        </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
-                            dashboard
+                            Catálogo
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('favorites.index')} active={route().current('favorites.index')}>
+                            Favoritos
                         </ResponsiveNavLink>
                     </div>
 

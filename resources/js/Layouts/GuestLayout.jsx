@@ -35,6 +35,12 @@ export default function GuestLayout({ children }) {
                             <Link href="/">
                                 <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                             </Link>
+                            <Link
+                                href={route('home')}
+                                className="text-lg font-semibold text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300"
+                            >
+                                Home
+                            </Link>
                             <span className="text-lg font-semibold text-gray-800 dark:text-white">Catálogo de Filmes</span>
                         </div>
 

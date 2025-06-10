@@ -29,4 +29,18 @@ class MovieController extends Controller
             'comments' => $comments,
         ]);
     }
+
+    public function getMovieDetails($id)
+    {
+        $response = Http::get("https://api.themoviedb.org/3/movie/{$id}", [
+            'api_key' => env('TMDB_KEY'),
+            'language' => 'pt-BR',
+        ]);
+
+        if ($response->failed()) {
+            return response()->json(['error' => 'Filme não encontrado'], 404);
+        }
+
+        return response()->json($response->json());
+    }
 }

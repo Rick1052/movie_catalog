@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\MovieApiController; // <-- Importar fora do bloco d
 
 // Rotas públicas para filmes
 Route::get('/movies', [MovieApiController::class, 'index']);
+Route::get('/movies/discover', [MovieApiController::class, 'discover']);
 Route::get('/movies/{id}', [MovieApiController::class, 'show']);
 
 // Rota protegida para usuário autenticado

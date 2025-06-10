@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { Link, useForm, usePage, router } from '@inertiajs/react';
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout';
 import GuestLayout from '../../Layouts/GuestLayout';
+import axios from 'axios';
+
+import badWords from '../../../../public/assets/PalavrasInvalidas/palavroes.json'; // Importa a lista de palavras proibidas
 
 export default function Show(props) {
     const { auth, errors, comments } = usePage().props;
     const { movie } = props;
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [checkingFavorite, setCheckingFavorite] = useState(true);
 
     const [editingCommentId, setEditingCommentId] = useState(null);
     const { data, setData, post, put, delete: destroy, reset, processing } = useForm({
@@ -13,6 +18,9 @@ export default function Show(props) {
         content: '',
     });
 
+    // Form para favoritar o filme
+    const { post: postFavorite, processing: processingFavorite, reset: resetFavorite } = useForm({ movie_id: movie.id });
+    
     const [isAuthenticated, setIsAuthenticated] = useState(!!auth?.user);
     const [LayoutComponent, setLayoutComponent] = useState(() =>
         isAuthenticated ? AuthenticatedLayout : GuestLayout
@@ -21,12 +29,27 @@ export default function Show(props) {
     const [successMessage, setSuccessMessage] = useState('');
     const [validationError, setValidationError] = useState('');
 
-    const badWords = ['palavrão1', 'palavrão2', 'palavrão3']; 
-
     useEffect(() => {
         setIsAuthenticated(!!auth?.user);
         setLayoutComponent(() => (auth?.user ? AuthenticatedLayout : GuestLayout));
     }, [auth]);
+
+    useEffect(() => {
+        const checkFavorite = async () => {
+            if (isAuthenticated) {
+                try {
+                    const response = await axios.get(route('favorites.check', movie.id));
+                    setIsFavorite(response.data.isFavorite);
+                } catch (error) {
+                    console.error('Erro ao verificar favorito:', error);
+                } finally {
+                    setCheckingFavorite(false);
+                }
+            }
+        };
+
+        checkFavorite();
+    }, [isAuthenticated, movie.id]);
 
     const startEdit = (comment) => {
         setEditingCommentId(comment.id);
@@ -46,18 +69,21 @@ export default function Show(props) {
         }
 
         const lowerContent = content.toLowerCase();
-        for (const badWord of badWords) {
-            if (lowerContent.includes(badWord)) {
-                return 'O comentário contém linguagem inadequada.';
+
+        let msgError = '';
+
+        badWords.forEach((item) => {
+            if (lowerContent.includes(item.toLowerCase())) {
+                msgError = 'O comentário contém linguagem inadequada.';
             }
-        }
+        });
 
         const validPattern = /^[a-zA-Z0-9\s.,!?;:'"()-]*$/;
         if (!validPattern.test(content)) {
             return 'O comentário contém caracteres inválidos.';
         }
 
-        return '';
+        return msgError;
     }
 
     const handleSubmit = (e) => {
@@ -105,6 +131,36 @@ export default function Show(props) {
         }
     };
 
+    const handleAddFavorite = () => {
+        postFavorite(route('favorites.store'), {
+            data: { movie_id: movie.id },
+            onSuccess: () => {
+                setSuccessMessage('Filme adicionado aos favoritos!');
+                setIsFavorite(true);
+                resetFavorite();
+                setTimeout(() => setSuccessMessage(''), 3000);
+            },
+            onError: (errors) => {
+                setValidationError(errors?.movie_id || 'Erro ao adicionar aos favoritos.');
+            }
+        });
+    };
+
+    const handleRemoveFavorite = () => {
+        if (confirm('Remover este filme dos favoritos?')) {
+            router.delete(route('favorites.destroy', movie.id), {
+                onSuccess: () => {
+                    setSuccessMessage('Filme removido dos favoritos!');
+                    setIsFavorite(false);
+                    setTimeout(() => setSuccessMessage(''), 3000);
+                },
+                onError: () => {
+                    setValidationError('Erro ao remover dos favoritos.');
+                }
+            });
+        }
+    };
+
     return (
         <LayoutComponent
             auth={auth}
@@ -135,7 +191,7 @@ export default function Show(props) {
                             href="/dashboard"
                             className="text-sm px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
                         >
-                            Voltar para o catálogo
+                            Voltar
                         </Link>
                     </div>
                 </header>
@@ -156,13 +212,35 @@ export default function Show(props) {
                             </p>
                         </div>
 
-                        <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded">
-                            <p className="text-sm mb-2">
-                                <strong>Lançamento:</strong> {movie.release_date}
-                            </p>
-                            <p className="text-sm">
-                                <strong>Avaliação:</strong> {movie.vote_average.toFixed(1)} ({movie.vote_count} votos)
-                            </p>
+                        <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded grid grid-cols-2">
+                            <div>
+                                <p className="text-sm mb-2">
+                                    <strong>Lançamento:</strong> {movie.release_date}
+                                </p>
+                                <p className="text-sm">
+                                    <strong>Avaliação:</strong> {movie.vote_average.toFixed(1)} ({movie.vote_count} votos)
+                                </p>
+                            </div>
+                            <div className="content-center flex flex-col justify-center items-center">
+                                {isAuthenticated && !checkingFavorite && (
+                                    isFavorite ? (
+                                        <button
+                                            onClick={handleRemoveFavorite}
+                                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
+                                        >
+                                            Remover dos Favoritos
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={handleAddFavorite}
+                                            disabled={processingFavorite}
+                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+                                        >
+                                            {processingFavorite ? 'Adicionando...' : 'Adicionar aos Favoritos'}
+                                        </button>
+                                    )
+                                )}
+                            </div>
                         </div>
                     </div>
 
