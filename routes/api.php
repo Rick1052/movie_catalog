@@ -9,7 +9,9 @@ Route::get('/movies', [MovieApiController::class, 'index']);
 Route::get('/movies/discover', [MovieApiController::class, 'discover']);
 Route::get('/movies/{id}', [MovieApiController::class, 'show']);
 
-// Rota protegida para usuário autenticado
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Rotas protegidas que requerem autenticação
+Route::middleware('check.access')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 });

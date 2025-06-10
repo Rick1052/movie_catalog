@@ -41,7 +41,12 @@ export default function GuestLayout({ children }) {
                             >
                                 Home
                             </Link>
-                            <span className="text-lg font-semibold text-gray-800 dark:text-white">Catálogo de Filmes</span>
+                            <Link
+                                href={route('dashboard')}
+                                className="text-lg font-semibold text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300"
+                            >
+                                <span className="text-lg font-semibold text-gray-800 dark:text-white">Catálogo</span>
+                            </Link>
                         </div>
 
                         {/* Ações lado direito */}
@@ -89,7 +94,7 @@ export default function GuestLayout({ children }) {
             </nav>
 
             {/* Conteúdo */}
-            <main className="py-10">{children}</main>
+            <main className="flex flex-1 min-h-[80vh] items-center justify-center">{children}</main>
 
             <Footer/>
         </div>

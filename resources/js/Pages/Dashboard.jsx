@@ -79,20 +79,18 @@ export default function Dashboard(props) {
 
     return (
         <Layout {...props}>
-            <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100">
-                <h1 className="text-3xl font-bold mb-6 text-center">Catálogo de Filmes</h1>
+            <div className="p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100">
+                <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center">Catálogo de Filmes</h1>
 
-                {loading && <p className="text-center mb-4">Carregando...</p>}
-
-                <div className="mb-8">
-                    <div className="relative max-w-xl mx-auto">
-                        <div className="flex items-center">
-                            <div className="relative flex-grow">
+                <div className="mb-6 sm:mb-8">
+                    <div className="relative max-w-xl mx-auto px-4 sm:px-0">
+                        <div className="flex flex-col sm:flex-row items-center gap-2">
+                            <div className="relative w-full">
                                 <input
                                     ref={searchInputRef}
                                     type="text"
                                     placeholder="Buscar filme por nome..."
-                                    className="w-full px-4 py-3 pl-10 border-2 border-gray-300 dark:border-gray-600 rounded-l-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white text-lg"
+                                    className="w-full px-4 py-2 sm:py-3 pl-10 border-2 border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-l-lg sm:rounded-r-none shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white text-base sm:text-lg"
                                 />
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,22 +98,22 @@ export default function Dashboard(props) {
                                     </svg>
                                 </div>
                             </div>
-                            <button
-                                onClick={handleSearch}
-                                className="px-4 py-3 bg-indigo-600 text-white rounded-r-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200"
-                            >
-                                Buscar
-                            </button>
-                            {searchInputRef.current?.value && (
+                            <div className="flex gap-2 w-full sm:w-auto">
                                 <button
-                                    onClick={handleClearSearch}
-                                    className="ml-2 p-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
+                                    onClick={handleSearch}
+                                    className="w-full sm:w-auto px-4 py-2 sm:py-3 bg-indigo-600 text-white rounded-lg sm:rounded-l-none sm:rounded-r-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200"
                                 >
-                                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
+                                    Buscar
                                 </button>
-                            )}
+                                {searchInputRef.current?.value && (
+                                    <button
+                                        onClick={handleClearSearch}
+                                        className="w-full sm:w-auto px-4 py-2 sm:py-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none border-2 border-gray-300 dark:border-gray-600 rounded-lg"
+                                    >
+                                        Limpar
+                                    </button>
+                                )}
+                            </div>
                         </div>
                         {searchInputRef.current?.value && (
                             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
@@ -125,25 +123,34 @@ export default function Dashboard(props) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+                {loading && (
+                    <div className="flex justify-center items-center py-8">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+                    </div>
+                )}
+
+                <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
                     {filteredMovies.map(movie => (
-                        <Link key={movie.id} href={`/movies/${movie.id}`}>
-                            <div className="bg-white dark:bg-gray-800 rounded shadow p-4 hover:shadow-lg transition flex flex-col items-center text-center">
-                                <img
-                                    src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
-                                    alt={movie.title}
-                                    className="rounded mb-2 mx-auto"
-                                />
-                                <h2 className="text-lg font-semibold dark:text-gray-100">{movie.title}</h2>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
-                                    Avaliação: {movie.vote_average.toFixed(1)}
-                                </p>
-                                <Link
-                                    href={`/movies/${movie.id}`}
-                                    className="inline-block mt-2 text-blue-600 dark:text-blue-400 hover:underline text-sm"
-                                >
-                                    Ver mais
-                                </Link>
+                        <Link key={movie.id} href={`/movies/${movie.id}`} className="transform hover:scale-105 transition-transform duration-200">
+                            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-200 flex flex-col h-full">
+                                <div className="relative pb-[150%]">
+                                    <img
+                                        src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
+                                        alt={movie.title}
+                                        className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
+                                    />
+                                </div>
+                                <div className="p-4 flex-grow">
+                                    <h2 className="text-base sm:text-lg font-semibold dark:text-gray-100 line-clamp-2">{movie.title}</h2>
+                                    <div className="mt-2 flex items-center justify-between">
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                                            Avaliação: {movie.vote_average.toFixed(1)}
+                                        </p>
+                                        <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">
+                                            Ver mais
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </Link>
                     ))}
@@ -162,7 +169,7 @@ export default function Dashboard(props) {
                     <button
                         onClick={() => handlePageClick(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="px-3 py-1 bg-gray-300 dark:bg-gray-700 rounded disabled:opacity-50 dark:text-gray-300"
+                        className="px-3 py-1 bg-gray-300 dark:bg-gray-700 rounded-lg disabled:opacity-50 dark:text-gray-300 hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors duration-200"
                     >
                         Anterior
                     </button>
@@ -177,9 +184,10 @@ export default function Dashboard(props) {
                             <button
                                 key={pageNum}
                                 onClick={() => handlePageClick(pageNum)}
-                                className={`px-3 py-1 rounded ${pageNum === currentPage
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-white dark:bg-gray-800 border dark:border-gray-600 dark:text-gray-300'
+                                className={`px-3 py-1 rounded-lg transition-colors duration-200 ${
+                                    pageNum === currentPage
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-white dark:bg-gray-800 border dark:border-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                                 }`}
                             >
                                 {pageNum}
@@ -189,7 +197,7 @@ export default function Dashboard(props) {
                     <button
                         onClick={() => handlePageClick(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="px-3 py-1 bg-gray-300 dark:bg-gray-700 rounded disabled:opacity-50 dark:text-gray-300"
+                        className="px-3 py-1 bg-gray-300 dark:bg-gray-700 rounded-lg disabled:opacity-50 dark:text-gray-300 hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors duration-200"
                     >
                         Próxima
                     </button>

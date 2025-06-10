@@ -34,7 +34,7 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <GuestLayout>
-            <Head title="Log in" />
+            <Head title="Entrar" />
 
             <div className="max-w-2xl mx-auto px-6">
                 <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
@@ -63,7 +63,7 @@ export default function Login({ status, canResetPassword }) {
                         </div>
 
                         <div className="mt-4">
-                            <InputLabel htmlFor="password" value="Password" />
+                            <InputLabel htmlFor="password" value="Senha" />
 
                             <TextInput
                                 id="password"
@@ -86,7 +86,7 @@ export default function Login({ status, canResetPassword }) {
                                     onChange={handleOnChange}
                                 />
                                 <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">
-                                    Remember me
+                                    Lembrar de mim
                                 </span>
                             </label>
                         </div>
@@ -96,7 +96,7 @@ export default function Login({ status, canResetPassword }) {
                                 href="/register"
                                 className="underline text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
-                                Register
+                                Registrar
                             </Link>
 
                             {canResetPassword && (
@@ -104,12 +104,12 @@ export default function Login({ status, canResetPassword }) {
                                     href={route('password.request')}
                                     className="underline text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                 >
-                                    Forgot your password?
+                                    Esqueceu a senha?
                                 </Link>
                             )}
 
                             <PrimaryButton className="ml-4" disabled={processing}>
-                                Log in
+                                Entrar
                             </PrimaryButton>
                         </div>
                     </form>

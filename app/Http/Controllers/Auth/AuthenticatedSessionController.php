@@ -33,6 +33,9 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        
+        // Define checkAccess na sessão após login bem-sucedido
+        $request->session()->put('checkAccess', true);
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }
@@ -45,8 +48,10 @@ class AuthenticatedSessionController extends Controller
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
+        
+        // Remove checkAccess da sessão durante o logout
+        $request->session()->forget('checkAccess');
 
         return redirect('/');
     }
